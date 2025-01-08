@@ -1,0 +1,80 @@
+# Sistema de Recomendación de Películas
+
+Este proyecto consiste en la creación de un sistema de recomendación de películas basado en la similitud entre títulos y la popularidad de las mismas. Se utilizó FastAPI para desplegar una API que permite interactuar con los datos y obtener recomendaciones.
+
+---
+
+## Datasets Utilizados
+Fueron utilizadas 500 filas de los datasets originales( movies_dataset y credits)
+
+### 1. **Dataset de Películas** (`df_recomendacion`)
+Contiene información relevante sobre las películas:
+- `title`: Título de la película.
+- `popularity`: Popularidad de la película.
+
+### 2. **Dataset de Créditos** (`df_credits`)
+Contiene información sobre el reparto y el equipo de producción:
+- `cast`: Lista de actores principales.
+- `crew`: Equipo de producción.
+- `id`: Identificador de la película.
+
+---
+
+## Funciones Implementadas
+
+### 1. **/votos_titulo**
+Recibe un título de película y devuelve:
+- Nombre de la película.
+- Cantidad de votos recibidos.
+- Promedio de votos.
+
+### 2. **/recomendacion**
+Recibe el título de una película y devuelve una lista con 5 películas similares. Estas recomendaciones se generan a partir de:
+- Similitud en los títulos utilizando un modelo TF-IDF.
+- Ponderación combinada entre la similitud y la popularidad normalizada.
+
+### 3. **Exploración de Datos (EDA)**
+Incluye visualizaciones y análisis estadísticos:
+- **Nube de Palabras:** Una visualización de los títulos más frecuentes en el dataset de películas.
+
+![Nube de Palabras](ruta_a_la_imagen/nube_palabras.png)
+
+---
+
+## Sistema de Recomendación
+El sistema está diseñado para recomendar películas basándose en dos aspectos principales:
+1. **Similitud entre Títulos:** Se utilizó TF-IDF para analizar los títulos de las películas y calcular la similitud del coseno entre ellos.
+2. **Popularidad:** Se normalizó el puntaje de popularidad para combinarlo con la similitud.
+
+### Flujo de Trabajo
+1. El usuario ingresa el título de una película.
+2. Se calcula la similitud con el resto de las películas.
+3. Se combina el score de similitud con la popularidad.
+4. Se devuelve una lista de las 5 películas más similares.
+
+---
+
+## Ejecución
+Para desplegar la API:
+```bash
+uvicorn main:app --reload
+```
+Una vez en ejecución, la API estará disponible en `http://127.0.0.1:8000`.
+
+Para visualizar la documentación de la API, accede a:
+- Documentación interactiva: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- Esquema OpenAPI: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+---
+
+## Requisitos
+- Python 3.8+
+- Librerías:
+  - `pandas`
+  - `numpy`
+  - `scikit-learn`
+  - `fastapi`
+  - `uvicorn`
+  - `matplotlib`
+  - `wordcloud`
+
