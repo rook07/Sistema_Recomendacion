@@ -1,5 +1,7 @@
 # Sistema de Recomendación de Películas
 
+Proyecto (MVP) MLOps Engineer.
+
 Este proyecto consiste en la creación de un sistema de recomendación de películas basado en la similitud entre títulos y la popularidad de las mismas. Se utilizó FastAPI para desplegar una API que permite interactuar con los datos y obtener recomendaciones.
 
 ---
