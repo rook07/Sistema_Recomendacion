@@ -7,10 +7,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Carga de datasets
-df_cantidad = pd.read_csv(r'C:\Users\Rocio\Desktop\Proyecto mlOps\dataset_cantidad.csv')
-df_score = pd.read_csv(r'C:\Users\Rocio\Desktop\Proyecto mlOps\dataset_score_title.csv')
-df_votos = pd.read_csv(r'C:\Users\Rocio\Desktop\Proyecto mlOps\dataset_votos.csv')
-df_recomendacion = pd.read_csv(r'C:\Users\Rocio\Desktop\Proyecto mlOps\dataset_recomendacion.csv')
+df_cantidad = pd.read_csv('dataset_cantidad.csv')
+df_score = pd.read_csv('dataset_score_title.csv')
+df_votos = pd.read_csv('dataset_votos.csv')
+df_recomendacion = pd.read_csv('dataset_recomendacion.csv')
 
 
 # Crear una instancia de la aplicación FastAPI
