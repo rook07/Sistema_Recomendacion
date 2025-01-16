@@ -1,0 +1,42 @@
+[33mcommit 43e7d52aae9049f5d3249be8203cefddd4ddf2c1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: rook <ruizrocioay@gmail.com>
+Date:   Tue Jan 14 20:31:06 2025 -0300
+
+    actualizacion
+
+[33mcommit 7f30a4e8c67b3fb85dfa7742eece0fa4363ce628[m
+Author: rook <ruizrocioay@gmail.com>
+Date:   Tue Jan 14 20:16:51 2025 -0300
+
+    actualizacion
+
+[33mcommit 91d800cd71ff0a70e5802751ca398c40d78b0e8c[m
+Merge: 2b21850 d6a116e
+Author: rook <ruizrocioay@gmail.com>
+Date:   Wed Jan 8 08:18:10 2025 -0300
+
+    Merge branch 'main' of https://github.com/rook07/Sistema_Recomendacion
+
+[33mcommit 2b218503fdaa84af0ba482195428c65168014ce9[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: rook <ruizrocioay@gmail.com>
+Date:   Wed Jan 8 07:43:22 2025 -0300
+
+     reorganizando los archivos
+
+[33mcommit 30bbd233ad5969561588f7d9028741f5e998070b[m
+Author: rook <ruizrocioay@gmail.com>
+Date:   Wed Jan 8 07:03:48 2025 -0300
+
+    Add large file support with Git LFS
+
+[33mcommit f7a97f0a7acd61a44ac31c86167781ca5416539d[m
+Author: rook <ruizrocioay@gmail.com>
+Date:   Wed Jan 8 06:18:18 2025 -0300
+
+    carga del proyecto
+
+[33mcommit d6a116eb7afa11b93f382af58b583abff50e10c4[m
+Author: RRocio <105246726+rook07@users.noreply.github.com>
+Date:   Wed Dec 11 08:45:02 2024 -0300
+
+    Initial commit
