@@ -12,4 +12,4 @@ source venv/Scripts/activate
 pip install -r requirements.txt
 
 # Ejecutar la aplicación (DENTRO del entorno virtual activado)
-uvicorn main:app --host 0.0.0.0 --port $PORT # Usa la variable de entorno $PORT
+uvicorn main:app --host 0.0.0.0 --port:10000 # Usa la variable de entorno $PORT
