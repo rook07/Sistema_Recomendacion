@@ -82,7 +82,7 @@ def votos_titulo(titulo_de_la_filmacion: str):
     if pelicula.empty:
         return "El título ingresado no se encuentra en la base de datos."
  
-    titulo = int(pelicula['title'].iloc[0])
+    titulo = pelicula['title'].iloc[0]
     cantidad_votos = int(pelicula['vote_count'].iloc[0])  # Conversión a int nativo
     promedio_votos = float(pelicula['vote_average'].iloc[0])
     
