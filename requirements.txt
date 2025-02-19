@@ -69,8 +69,8 @@ traitlets
 typer
 typing_extensions
 tzdata
-uvicorn
 watchfiles
 wcwidth
 websockets
 wordcloud
+uvicorn[standard]

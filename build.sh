@@ -1,6 +1,15 @@
+#!/bin/bash
 
-pip install --upgrade pip
+# Crear el entorno virtual (si no existe)
+if [ ! -d "venv" ]; then
+  python -m venv venv
+fi
 
-source venv\Scripts\activate
+# Activar el entorno virtual (ruta correcta en Windows)
+source venv/Scripts/activate
 
-uvicorn main:app --host 0.0.0.0 --port 10000
+# Instalar las dependencias (DENTRO del entorno virtual activado)
+pip install -r requirements.txt
+
+# Ejecutar la aplicación (DENTRO del entorno virtual activado)
+uvicorn main:app --host 0.0.0.0 --port $PORT # Usa la variable de entorno $PORT
