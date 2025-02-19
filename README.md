@@ -33,8 +33,8 @@ cd Proyecto MlOps
 ⿢ Crear y activar un entorno virtual
 
 En Windows (Git Bash o PowerShell):
-git clone https://github.com/tu_usuario/tu_repositorio.git
-cd tu_repositorio
+git clone https://(https://github.com/rook07/Sistema_Recomendacion)
+
 
 ⿢ Crear y activar un entorno virtual
 
