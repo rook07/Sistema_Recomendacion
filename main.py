@@ -11,7 +11,8 @@ df_cantidad = pd.read_csv('dataset_cantidad.csv')
 df_score = pd.read_csv('dataset_score_title.csv')
 df_votos = pd.read_csv('dataset_votos.csv')
 df_recomendacion = pd.read_csv('dataset_recomendacion.csv')
-
+df_actor =pd.read_csv('dataset_actor.csv')
+df_director =pd.read_csv('dataset_director.csv')
 
 # Crear una instancia de la aplicación FastAPI
 app = FastAPI()
@@ -23,7 +24,6 @@ def contar_peliculas_por_mes(mes: str):
     Este endpoint recibe un mes en idioma español y devuelve la cantidad de películas 
     estrenadas en ese mes según el dataset.
     """
-    # Diccionario para mapear nombres de meses a números
     meses_dict = {
         'enero': 1,
         'febrero': 2,
@@ -39,17 +39,12 @@ def contar_peliculas_por_mes(mes: str):
         'diciembre': 12
     }
     
-    # Convertir el nombre del mes a minúsculas y buscar en el diccionario
     mes_numero = meses_dict.get(mes.lower())
-    
-    # Verificar si el mes es válido
     if mes_numero is None:
         return {"error": "Mes no válido. Por favor, ingresa un mes válido en español."}
     
-    # Filtrar el DataFrame para contar las películas estrenadas en el mes dado
     peliculas_estrenadas = df_cantidad[(df_cantidad['mes'] == mes_numero) & (df_cantidad['status'] == 'Released')]
     
-    # Retornar la cantidad de películas
     return {"mes": mes.capitalize(), "cantidad_peliculas": len(peliculas_estrenadas)}
 
 
@@ -59,7 +54,6 @@ def contar_peliculas_por_mes(mes: str):
 def cantidad_filmaciones_dia(dia: str):
     """Este endpoint recibe un día en idioma español y devuelve la cantidad de películas 
         estrenadas en ese día según el dataset."""
-    # Diccionario para mapear nombres de dias a números
     dias_dict = {
         'domingo': 1,
         'lunes': 2,
@@ -69,39 +63,34 @@ def cantidad_filmaciones_dia(dia: str):
         'viernes': 6,
         'sabado': 7
     }
-    
-    # Convertir el nombre del dia a minúsculas y buscar en el diccionario
     numero_dia = dias_dict.get(dia.lower())
     
     if numero_dia is None:
         return {"error": "Dia no válido. Por favor, ingresa un dia válido en español."}
     
-    # Filtrar el DataFrame para contar las películas estrenadas en el dia dado
     peliculas_estrenadas = df_cantidad[(df_cantidad['dia'] == numero_dia) & (df_cantidad['status'] == 'Released')]
 
-    # Retornar la cantidad de películas
     return {"dia": dia.capitalize(), "cantidad_peliculas": len(peliculas_estrenadas)}
+
 
 @app.get("/votos_titulo")
 def votos_titulo(titulo_de_la_filmacion: str):
     '''Se ingresa el título de una filmación esperando como respuesta el título, el año de estreno y el score.'''
-    # Filtrar el DataFrame para encontrar el título ingresado
+    
     pelicula = df_votos[df_votos['title'].str.lower() == titulo_de_la_filmacion.lower()]
     
     if pelicula.empty:
         return "El título ingresado no se encuentra en la base de datos."
-    
-    # Extraer información de la 
+ 
     titulo = int(pelicula['title'].iloc[0])
     cantidad_votos = int(pelicula['vote_count'].iloc[0])  # Conversión a int nativo
     promedio_votos = float(pelicula['vote_average'].iloc[0])
     
-    # Verificar si cumple con la condición de al menos 2000 valoraciones
     if cantidad_votos < 2000:
        return {
             "mensaje": f"La película '{titulo}' no cumple con el requisito mínimo de 2000 valoraciones (tiene {cantidad_votos} valoraciones)."
         }
-    # Retornar la información si cumple la condición
+       
     return {
         "titulo": titulo,
         "cantidad_votos": cantidad_votos,
@@ -113,13 +102,12 @@ def votos_titulo(titulo_de_la_filmacion: str):
 @app.get("/score_titulo")
 def score_titulo(titulo_de_la_filmacion: str):
     '''Se ingresa el título de una filmación esperando como respuesta el título, el año de estreno y el score.'''
-    # Filtra el DataFrame para encontrar la fila correspondiente al título ingresado
+
     pelicula = df_score[df_score['title'].str.lower() == titulo_de_la_filmacion.lower()]
     
     if pelicula.empty: #si es incorrecto o vacio )
      return {"error": "El título ingresado no se encuentra en la base de datos."}
-      
-    # Extrae los valores y los almacena en un df llamado pelicula y lee la unica fila 
+ 
     titulo = pelicula['title'].iloc[0]
     anio_estreno = pelicula['release_year'].iloc[0]
     score = pelicula['popularity'].iloc[0]
@@ -132,66 +120,88 @@ def score_titulo(titulo_de_la_filmacion: str):
     }
     
     
+    
+@app.get("/actor")
+def actor(nombre_actor: str):
+    nombre_actor = nombre_actor.lower()
+    if not df_actor['cast_name'].str.lower().isin([nombre_actor]).any():
+        return f"Error: El actor '{nombre_actor}' no se encuentra en la base de datos."
 
-# Reviso los valores nulos
-df_recomendacion['titulo'] = df_recomendacion['title'].fillna('')
-df_recomendacion['popularidad'] = df_recomendacion['popularity'].fillna(0)
+    actor = df_actor[df_actor['cast_name'].str.lower() == nombre_actor]
+    director = df_director[df_director['name'] == nombre_actor]
+    if not director.empty:
+        return f"Error: El actor '{nombre_actor}' también es director en algunas películas. No se incluirán en el análisis."
 
-# Normalizar la popularidad para combinar similitudes
-df_recomendacion['popularidad_normalizada'] = (
-    df_recomendacion['popularidad'] - df_recomendacion['popularidad'].min()
-) / (df_recomendacion['popularidad'].max() - df_recomendacion['popularidad'].min())
+    total_peliculas = len(actor)
+    total_retorno = actor['return'].sum()
+    exito= total_retorno / total_peliculas if total_peliculas > 0 else 0
+    
+    return f"El actor {nombre_actor} ha participado en {total_peliculas} filmaciones, logrando un retorno total de {total_retorno:.2f} con un promedio de {exito:.2f} por filmación."
 
-# Convertir los títulos del dataset a minúsculas para consistencia
-df_recomendacion['titulo_normalizado'] = df_recomendacion['titulo'].str.lower()
 
-# Crear un vectorizador TF-IDF para calcular similitud de títulos normalizados
-vectorizador_tfidf = TfidfVectorizer(stop_words='english')
-matriz_tfidf = vectorizador_tfidf.fit_transform(df_recomendacion['titulo_normalizado'])
+@app.get("/director")
+def get_director(nombre_director):
+    
+    nombre_director = nombre_director.lower()
+    director= df_director[df_director['name'].str.lower() == nombre_director]
+    
+    if director.empty:
+        return f"Error: El director '{nombre_director.title()}' no se encuentra en la base de datos."
+    
+    pelicula_id = director['id'].tolist()
+    peliculas = df_actor[df_actor['id'].isin(pelicula_id)][['id', 'title', 'release_date', 'budget', 'revenue', 'return']].drop_duplicates(subset=['id'])
+    if peliculas.empty:
+        return f"Error: No se encontraron películas dirigidas por '{nombre_director.title()}'."
+    exito= peliculas['return'].sum()
+    cant_peliculas = len(peliculas)
 
-# Calcular la matriz de similitud del coseno para los títulos
+    mensaje = f" El director {nombre_director.title()} ha dirigido {cant_peliculas} películas, con un exito de {exito:.2f}.\n\n"
+    mensaje += " **Listado de películas:**\n"
+
+    for _, row in peliculas.iterrows():
+        mensaje += (f"- {row['title']} (estrenada en: {row['release_date'].strftime('%Y-%m-%d')}): "
+                    f"Retorno: {row['return']:.2f}, Costo: {row['budget']}, Ganancia: {row['revenue']}\n")
+
+    return mensaje
+
+
+# "SISTEMA DE RECOMENDACION"
+
+vec_tfidf = TfidfVectorizer(stop_words='english')
+matriz_tfidf = vec_tfidf.fit_transform(df_recomendacion['titulos'])
 similitud_coseno = cosine_similarity(matriz_tfidf, matriz_tfidf)
-
-# Crear una serie para mapear títulos normalizados a índices
-indices_titulos = pd.Series(df_recomendacion.index, index=df_recomendacion['titulo_normalizado']).drop_duplicates()
+indices = pd.Series(df_recomendacion.index, index=df_recomendacion['titulos']).drop_duplicates()
 
 @app.get("/recomendacion")
 def recomendacion(titulo: str):
-    """
+    ''' 
     Recibe el título de una película y devuelve una lista de 5 películas similares.
-    """
-    # Normalizar el título ingresado a minúsculas
-    titulo_normalizado = titulo.lower()
-    
-    # Verificar si el título existe en los datos
-    if titulo_normalizado not in indices_titulos:
+    '''
+    titulo = titulo.lower()
+    if titulo not in indices:
         return {"error": "El título ingresado no se encuentra en la base de datos."}
 
-    # Obtener el índice de la película
-    indice = indices_titulos[titulo_normalizado]
-    
-    # Calcular las similitudes de los títulos
-    puntajes_similitud = list(enumerate(similitud_coseno[indice]))
+    idx = indices[titulo]
+    # Calcula las similitudes de los títulos
+    sim_scores = list(enumerate(similitud_coseno[idx]))
     
     # Ordenar las películas por su puntuación de similitud de títulos
-    puntajes_similitud = sorted(puntajes_similitud, key=lambda x: x[1], reverse=True)
-    
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
     # Excluir la película original y limitar a las 10 más similares
-    puntajes_similitud = puntajes_similitud[1:11]
+    sim_scores = sim_scores[1:11]
     
     # Crear una métrica combinada basada en popularidad y similitud
     recomendaciones = []
-    for i, similitud in puntajes_similitud:
-        puntaje = similitud * 0.7 + df_recomendacion.iloc[i]['popularidad_normalizada'] * 0.3
-        recomendaciones.append((df_recomendacion.iloc[i]['titulo'], puntaje))
+    for i, sim in sim_scores:
+        score = sim * 0.7 + df_recomendacion.iloc[i]['popularidad'] * 0.3
+        recomendaciones.append((df_recomendacion.iloc[i]['titulos'], score))
     
-    # Ordenar por el puntaje combinado
     recomendaciones = sorted(recomendaciones, key=lambda x: x[1], reverse=True)[:5]
     
     # Extraer los títulos de las películas recomendadas
-    titulos_recomendados = [r[0] for r in recomendaciones]
+    recomendacion_titulos = [r[0] for r in recomendaciones]
     
-    return {"recomendaciones": titulos_recomendados}
+    return {"recomendaciones": recomendacion_titulos}
 
 
 
